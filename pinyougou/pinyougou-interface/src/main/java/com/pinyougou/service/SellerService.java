@@ -37,4 +37,6 @@ public interface SellerService {
 	Seller findSellerBySellerId(String sellerId);
 
 	void updateSeller(Seller seller);
+
+    void updatePasswrod(String sellerId, String encode2);
 }

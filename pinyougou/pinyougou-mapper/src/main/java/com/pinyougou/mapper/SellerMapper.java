@@ -25,4 +25,7 @@ public interface SellerMapper extends Mapper<Seller> {
 
     @Select("select * from tb_seller where seller_id = #{sellerId}")
     Seller selectSellerBySellerId(CharSequence sellerId);
+
+    @Update("update tb_seller set password = #{password} where seller_id = #{sellerId}")
+    void updatePassword(@Param("sellerId") String sellerId ,@Param("password") String password);
 }

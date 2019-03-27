@@ -18,6 +18,8 @@ app.controller('sellerController', function($scope, $controller, baseService){
             });
     };
 
+    $scope.statusArr = ['未审核','已审核','审核不通过'];
+
     /** 添加或修改 */
     $scope.saveOrUpdate = function(){
         var url = "save";

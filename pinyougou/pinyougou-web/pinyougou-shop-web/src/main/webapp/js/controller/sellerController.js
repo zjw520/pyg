@@ -78,4 +78,21 @@ app.controller('sellerController', function ($scope, $controller, baseService) {
 
     };
 
+    $scope.password={pw:"",pw1:"",pw2:""};
+
+    $scope.updatePasswrod=function (password) {
+
+        if(password.pw1 == password.pw2){
+            baseService.sendPost("/seller/updatePasswrod", password).then(function (response) {
+                if(response.data){
+                    alert("修改成功")
+                }else {
+                    alert("修改失败")
+                }
+            })
+        }else {
+            alert("两次输入的密码不正确");
+        }
+    }
+
 });

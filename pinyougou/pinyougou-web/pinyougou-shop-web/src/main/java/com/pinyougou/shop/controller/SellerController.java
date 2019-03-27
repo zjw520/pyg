@@ -60,4 +60,25 @@ public class SellerController {
         }
     }
 
+    @PostMapping("/updatePasswrod")
+    public boolean updatePasswrod(HttpServletRequest request,@RequestBody Map<String ,String> map){
+        try {
+            Seller seller = findSellerBySellerId(request);
+            String passwordOld = seller.getPassword();
+            String sellerId = seller.getSellerId();
+            String password = map.get("pw");
+            String pw1 = map.get("pw1");
+            BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+            String encode2 = passwordEncoder.encode(pw1);
+            if (passwordEncoder.matches(password, passwordOld)){
+               sellerService.updatePasswrod(sellerId,encode2);
+               return true;
+            }else {
+                return false;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
 }

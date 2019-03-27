@@ -16,6 +16,7 @@ import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  * SellerServiceImpl 服务接口实现类
@@ -148,6 +149,16 @@ public class SellerServiceImpl implements SellerService {
             sellerMapper.updateByPrimaryKeySelective(seller);
         } catch (Exception e) {
             throw new RuntimeException(e);
+        }
+
+    }
+
+    @Override
+    public void updatePasswrod(String sellerId ,String password) {
+        try {
+            sellerMapper.updatePassword(sellerId,password);
+        } catch (Exception e) {
+          throw new RuntimeException(e);
         }
 
     }
