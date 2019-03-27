@@ -13,7 +13,7 @@ import java.util.List;
 @RequestMapping("/areaid")
 public class AreaController {
 
-    @Reference(timeout = 10000)
+    @Reference(timeout = 10002)
     private AreasService areasService;
 
     @GetMapping("/findAreaidByCityid")
