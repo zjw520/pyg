@@ -156,4 +156,24 @@ public class UserServiceImpl implements UserService {
 
     }
 
+    @Override
+    public boolean tianjia(User user) {
+        return false;
+    }
+
+    @Override
+    public boolean updphone(User user) {
+        return false;
+    }
+
+    @Override
+    public User showtable(String username) {
+        return null;
+    }
+
+    @Override
+    public boolean sendCodee(String phone) {
+        return false;
+    }
+
 }

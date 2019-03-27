@@ -24,6 +24,8 @@ public class UserController {
 
     @Reference(timeout = 10000)
     private SmsService smsService;
+    @Reference(timeout = 10000)
+    private HttpServletRequest request;
 
 
     @PostMapping("/save")
@@ -82,6 +84,59 @@ public class UserController {
         } catch (Exception e) {
             e.printStackTrace();
             return false;
+        }
+    }
+
+    @GetMapping("/sendCodee")
+    private boolean sendCodee(String phone) {
+        try {
+            if (StringUtils.isNoneBlank(phone)) {
+                //发送验证码
+                userService.sendCodee(phone);
+                return true;
+            }
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return false;
+    }
+    //提交用户
+    @PostMapping("/tianjia")
+    public boolean tianjia(HttpServletRequest request, @RequestBody Map<String,String> map) {
+        try {
+            String username = request.getRemoteUser();
+            String password = map.get("password");
+            User user = new User();
+            user.setUsername(username);
+            user.setPassword(password);
+            return userService.tianjia(user);
+        } catch (Exception ex) {
+            return false;
+        }
+    }
+    //绑定手机
+    @PostMapping("/updphone")
+    public boolean updphone(HttpServletRequest request, @RequestBody Map<String,String> map){
+        try{
+            String username = request.getRemoteUser();
+            String phone = map.get("phone");
+            User user = new User();
+            user.setUsername(username);
+            user.setPhone(phone);
+            return userService.updphone(user);
+        }catch (Exception ex){
+            return false;
+        }
+    }
+    //页面显示电话号码
+    @GetMapping("/showbiao")
+    public User showtable(HttpServletRequest request){
+        try {
+            String username = request.getRemoteUser();
+            return userService.showtable(username);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 

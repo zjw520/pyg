@@ -39,10 +39,10 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private UserMapper userMapper;
-
-
     @Autowired
     private RedisTemplate<String, String> redisTemplate;
+
+
 
     @Value("${sms.url}")
     private String smsUrl;
@@ -199,8 +199,71 @@ public class UserServiceImpl implements UserService {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-
     }
+    @Override
+    public boolean tianjia(User user) {
+        try{
+            //修改日期ete());
+            //密码加密
+//            user.setPassword(user.getPassword());
+            Example example=new Example(User.class);
+            Example.Criteria criteria = example.createCriteria();
+            criteria.andEqualTo("username",user.getUsername());///where username ='acc'
+            user.setPassword(DigestUtils.md5Hex(user.getPassword()));//and password="1234567'
+            userMapper.updateByExampleSelective(user,example);
+//            userMapper.updateByPrimaryKeySelective(user);
+            //修改
+            return true;
+        }catch (Exception ex){
+            throw new RuntimeException(ex);
+        }
+    }
+
+    @Override
+    public boolean updphone(User user) {
+        try{
+            Example example=new Example(User.class);
+            Example.Criteria criteria=example.createCriteria();
+            criteria.andEqualTo("username",user.getUsername());
+            user.setPhone(user.getPhone());
+            userMapper.updateByExampleSelective(user,example);
+            return true;
+        }catch (Exception ex){
+            throw new RuntimeException(ex);
+        }
+    }
+
+    @Override
+    public User showtable(String username) {
+        try {
+            User user=new User();
+            user.setUsername(username);
+            return userMapper.selectOne(user);
+        } catch (Exception e) {
+            throw  new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public boolean sendCodee(String phone) {
+        try {
+            String code = UUID.randomUUID().toString().replaceAll("-", "").replaceAll("[a-z|A-Z]", "").substring(0, 6);
+            HttpClientUtils httpClientUtils = new HttpClientUtils(false);
+            Map<String, String> param = new HashMap<>();
+            param.put("phone", phone);
+            param.put("signName", signName);
+            param.put("templateCode", templateCode);
+            param.put("templateParam", "{\"code\":\"" + code + "\"}");
+            String content = httpClientUtils.sendPost(smsUrl, param);
+
+            Map<String, Object> resMap = JSON.parseObject(content, Map.class);
+            redisTemplate.boundValueOps(phone).set(code, 90, TimeUnit.SECONDS);
+            return (boolean) resMap.get("success");
+
+        } catch (Exception ex) {
+            throw new RuntimeException(ex);
+        }
+    };
 
 
 }

@@ -38,4 +38,13 @@ public interface UserService {
     User findUser(String username);
 
 	void updateUser(User user);
+
+
+	boolean tianjia(User user);
+
+	boolean updphone(User user);
+
+	User showtable(String username);
+
+	boolean sendCodee(String phone);
 }

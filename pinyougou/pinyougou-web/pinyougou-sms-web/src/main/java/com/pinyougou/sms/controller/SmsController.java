@@ -19,9 +19,9 @@ public class SmsController {
     @PostMapping("/sendSms")
     public Map<String, Object> sendSms(String phone, String signName, String templateCode, String templateParam) {
         boolean success = smsService.sendSms(phone, signName, templateCode, templateParam);
-        Map<String, Object> data = new HashMap<>();
-        data.put("success", success);
-        return data;
+        Map<String, Object> map = new HashMap<>();
+        map.put("success", success);
+        return map;
     }
 
 }

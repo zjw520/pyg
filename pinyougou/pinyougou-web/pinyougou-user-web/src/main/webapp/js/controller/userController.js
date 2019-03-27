@@ -21,15 +21,15 @@ app.controller('userController', function ($scope,$controller , baseService) {
         })
     }
 
-    $scope.sendCode = function () {
-        if ($scope.user.phone) {
-            baseService.sendGet("/user/sendCode?phone=" + $scope.user.phone).then(function (response) {
+    $scope.sendCode = function (phone) {
+        if (phone) {
+            baseService.sendGet("/user/sendCode?phone=" + phone).then(function (response) {
                 alert(response.data ? "发送成功!" : "发送失败!");
             });
         } else {
             alert("请输入手机号码")
         }
-    }
+    };
 
     $scope.showName = function(){
         baseService.sendGet("/user/showName").then(function (response) {
@@ -118,4 +118,50 @@ app.controller('userController', function ($scope,$controller , baseService) {
             }
         })
     }
+    $scope.sendCodee = function () {
+        if ($scope.user.phone) {
+            baseService.sendGet("/user/sendCodee?phone=" + $scope.user.phone).then(function (response) {
+                alert(response.data ? "发送成功!" : "发送失败!");
+            });
+        } else {
+            alert("请输入手机号码");
+        }
+    };
+    //定义提交用户方法
+    $scope.tianjia=function () {
+        if ($scope.user.password !=$scope.password){
+            alert("密码不一致，请重新输入！");
+            return;
+        }
+        baseService.sendPost("/user/tianjia",$scope.user)
+            .then(function (response) {
+                if (response.data){
+                    alert("密码更改成功！");
+                    // $scope.user.username={};
+                    $scope.password="";
+                }else {
+                    alert("密码更改失败！");
+                }
+            });
+    };
+    //定义绑定新手机
+    $scope.updphone=function () {
+        baseService.sendPost("/user/updphone",$scope.user)
+            .then(function (response) {
+                if (response.data){
+                    alert("手机号码更改成功")
+                    location.href="/home-setting-address-complete.html";
+                    $scope.phone="";
+                }else {
+                    alert("手机号码更改失败");
+                }
+            });
+    };
+    //获取手机号码
+    $scope.showbiao=function () {
+        baseService.sendGet("/user/showbiao").then(function (response) {
+            $scope.userbiao=response.data;
+        });
+    }
+
 });
