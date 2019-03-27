@@ -11,12 +11,13 @@
 	<script src="js/base.js"></script>
 	<script src="js/service/baseService.js"></script>
 	<script src="js/controller/userController.js"></script>
+	<script src="js/controller/jwController.js"></script>
 
 
 </head>
 
 <body ng-app="pinyougou"
-	  ng-controller="userController"
+	  ng-controller="jwController"
 	  ng-init="showName();findUser();findItemCatByParentId()">
     <!-- 头部栏位 -->
     <!--页面顶部-->
@@ -257,7 +258,7 @@ $(function(){
 										<table>
 											<tr>
 												<td><select class="form-control" ng-model="userData.address.provinceid"
-															ng-options="i.provinceId as i.province for i in provincesList" ng-change="change()">
+															ng-options="i.provinceId as i.province for i in provincesList">
 													<option value="">===请选择一级分类===</option>
 												</select></td>
 												<td><select class="form-control select-sm" ng-model="userData.address.cityid"
