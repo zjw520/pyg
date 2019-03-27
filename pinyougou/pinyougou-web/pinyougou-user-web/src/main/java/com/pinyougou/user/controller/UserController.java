@@ -3,6 +3,7 @@ package com.pinyougou.user.controller;
 import com.alibaba.dubbo.config.annotation.Reference;
 import com.pinyougou.pojo.Provinces;
 import com.pinyougou.pojo.User;
+import com.pinyougou.service.AddressService;
 import com.pinyougou.service.SmsService;
 import com.pinyougou.service.UserService;
 import org.apache.commons.lang3.StringUtils;
@@ -27,6 +28,8 @@ public class UserController {
     @Reference(timeout = 10000)
     private HttpServletRequest request;
 
+    @Reference(timeout = 10000)
+    private AddressService addressService;
 
     @PostMapping("/save")
     private boolean save(@RequestBody User user, String smsCode) {
@@ -139,5 +142,16 @@ public class UserController {
             throw new RuntimeException(e);
         }
     }
+
+    @GetMapping("/showOrder")
+    public List<Map<String,Object>> showOrder(HttpServletRequest request){
+        String userId = request.getRemoteUser();
+        if (StringUtils.isNoneBlank(userId)){
+            return userService. showOrder(userId);
+        }
+        return null;
+    }
+
+
 
 }
