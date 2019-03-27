@@ -3,6 +3,8 @@ package com.pinyougou.service;
 import com.pinyougou.pojo.User;
 import java.util.List;
 import java.io.Serializable;
+import java.util.Map;
+
 /**
  * UserService 服务接口
  * @date 2019-02-27 16:23:07
@@ -38,4 +40,6 @@ public interface UserService {
     User findUser(String username);
 
 	void updateUser(User user);
+
+    List<Map<String,Object>> showOrder(String userId);
 }

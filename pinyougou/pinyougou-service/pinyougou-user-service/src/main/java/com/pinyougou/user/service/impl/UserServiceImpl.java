@@ -1,4 +1,5 @@
 package com.pinyougou.user.service.impl;
+import java.math.BigDecimal;
 import java.util.Date;
 
 import com.alibaba.dubbo.config.annotation.Service;
@@ -8,7 +9,10 @@ import com.github.pagehelper.ISelect;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.pinyougou.common.util.HttpClientUtils;
-import com.pinyougou.mapper.UserMapper;
+import com.pinyougou.mapper.*;
+import com.pinyougou.pojo.Order;
+import com.pinyougou.pojo.OrderItem;
+import com.pinyougou.pojo.Seller;
 import com.pinyougou.pojo.User;
 
 import com.pinyougou.service.UserService;
@@ -43,6 +47,18 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private RedisTemplate<String, String> redisTemplate;
+
+    @Autowired
+    private OrderMapper orderMapper;
+
+    @Autowired
+    private OrderItemMapper orderItemMapper;
+
+    @Autowired
+    private SellerMapper sellerMapper;
+
+    @Autowired
+    private ItemMapper itemMapper;
 
     @Value("${sms.url}")
     private String smsUrl;
@@ -200,6 +216,70 @@ public class UserServiceImpl implements UserService {
             throw new RuntimeException(e);
         }
 
+    }
+
+    @Override
+    public List<Map<String, Object>> showOrder(String userId) {
+        try {
+            List<Map<String,Object>>  list = new ArrayList<>();
+            Example example = new Example(Order.class);
+            Example.Criteria criteria = example.createCriteria();
+            criteria.andEqualTo("userId", userId);
+            //获取订单集合
+            List<Order> orders = orderMapper.selectByExample(example);
+
+            if (orders!=null && orders.size()>0){
+                for (Order order : orders) {//订单遍历
+                    Map<String,Object> map = new HashMap<>();
+                    Long orderId = order.getOrderId();
+                    //id超过long类型的取值范围,转换成字符串
+                    String orderIdStr = orderId.toString();
+                    map.put("orderId", orderIdStr);
+                    map.put("status",order.getStatus() );
+                    Date createTime = order.getCreateTime();
+                    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                    //日期转换成字符串类型
+                    String date = simpleDateFormat.format(createTime);
+                    map.put("createTime", date);
+                    //获取店铺名称
+                    String sellerId = order.getSellerId();
+                    Seller seller = sellerMapper.selectSellerBySellerId(sellerId);
+                    String nickName = seller.getNickName();
+                    map.put("sellerId",nickName );
+                    //根据orderId 查询orderItem表
+                    List<OrderItem> orderItems = orderItemMapper.findOrderItemS(orderId);
+                    //创建List<Map<string,object>>,封装orderItem的属性值,以及对应商品的规格值(根据itemId查询item表)
+                    List<Map<String,Object>> itemList = new ArrayList<>();
+                    double pay = 0;
+                    for (OrderItem orderItem : orderItems) {//遍历订单详情
+                        Map<String,Object> itemMap = new HashMap<>();
+                        double price = orderItem.getPrice().doubleValue();
+                        itemMap.put("price", price);
+                        double num = orderItem.getNum().doubleValue();
+                        itemMap.put("num", orderItem.getNum());
+                        pay+=num*price;
+                        itemMap.put("picPath",orderItem.getPicPath() );
+                        itemMap.put("title",orderItem.getTitle() );
+                        Long itemId = orderItem.getItemId();
+                        //根据itemId获取规格:
+                        String spec = itemMapper.findSpcByItemId(itemId);
+                        Map specMap = JSON.parseObject(spec, Map.class);
+                        String specString = specMap.toString();
+                        String specStr = specString.replace("{", "").replace("}", "").replace("=", ":");
+                        itemMap.put("spec",specStr );
+                        itemList.add(itemMap);
+                    }
+                    //pay 订单实际支付总金额
+                    order.setPayment(new BigDecimal(pay));
+                    map.put("payment",order.getPayment() );
+                    map.put("orderItems", itemList);
+                    list.add(map);
+                }
+            }
+            return list;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
 

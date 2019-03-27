@@ -1,6 +1,7 @@
 package com.pinyougou.mapper;
 
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 import tk.mybatis.mapper.common.Mapper;
 
@@ -21,4 +22,7 @@ public interface SellerMapper extends Mapper<Seller> {
 
     @Update("update tb_seller set status = #{status} where seller_id = #{sellerId}")
     void updateStatus(@Param("sellerId") String sellerId, @Param("status") String status);
+
+    @Select("select * from tb_seller where seller_id = #{sellerId}")
+    Seller selectSellerBySellerId(CharSequence sellerId);
 }

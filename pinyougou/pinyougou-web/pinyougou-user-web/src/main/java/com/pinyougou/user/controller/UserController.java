@@ -85,4 +85,15 @@ public class UserController {
         }
     }
 
+    @GetMapping("/showOrder")
+    public List<Map<String,Object>> showOrder(HttpServletRequest request){
+        String userId = request.getRemoteUser();
+        if (StringUtils.isNoneBlank(userId)){
+            return userService. showOrder(userId);
+        }
+        return null;
+    }
+
+
+
 }
